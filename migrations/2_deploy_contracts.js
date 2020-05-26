@@ -5,12 +5,10 @@ var MainTokenProxy = artifacts.require('./MainTokenProxy.sol');
 var ERC20Token = artifacts.require('./ERC20Token.sol');
 var HashUtils = artifacts.require('./HashUtils.sol');
 
-const BigNumber = web3.BigNumber;
-
 module.exports = function(deployer, network, accounts) {
-  let decimals = new BigNumber(18);
-  let initialSupply = new BigNumber(10000);
-  let maxSupply = new BigNumber(800000000);
+  let decimals = 18;
+  let initialSupply = 10000;
+  let maxSupply = 800000000;
   let mainChainId = 1000;
   let sideChainId = 2000;
 
