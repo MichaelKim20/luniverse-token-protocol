@@ -11,7 +11,7 @@
  *     gasPrice: 10000000000,
  *   },
  */
-
+require('ts-node/register')
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
@@ -20,5 +20,12 @@ module.exports = {
     solc: {
       version: "0.4.24"  // ex:  "0.4.20". (Default: Truffle's installed solc)
     }
-  }
+  },
+  networks: {
+    development: {
+      host: 'localhost',
+      port: 7545,
+      network_id: '*',
+    }
+  },
 };

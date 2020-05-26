@@ -20,27 +20,29 @@
   },
   "homepage": "https://github.com/Lambda256/luniverse-token-protocol#readme",
   "dependencies": {
-    "typescript": "^3.2.2",
-    "web3": "^0.20.7"
+    "typescript": "^3.9.3",
+    "web3": "1.0.0-beta.35"
   },
   "devDependencies": {
     "@types/bignumber.js": "^5.0.0",
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.2",
-    "bignumber.js": "^7.2.1",
-    "chai": "^4.1.2",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10.17.24",
+    "bignumber.js": "^8.0.1",
+    "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
-    "eslint": "^5.10.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "ganache-cli": "^6.1.6",
-    "truffle": "^4.1.13",
-    "truffle-typings": "^1.0.5",
+    "chai-bn": "^0.2.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.20.2",
+    "ganache-cli": "^6.9.1",
+    "truffle": "^4.1.17",
+    "truffle-assertions": "^0.9.2",
+    "truffle-typings": "^1.0.8",
     "ts-generator": "0.0.8",
     "ts-lint": "^4.5.1",
     "ts-node": "^7.0.1",
-    "typechain": "^0.3.9"
+    "typechain": "^0.3.21"
   }
 }
