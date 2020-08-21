@@ -22,6 +22,14 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
       tokenInstance = await ERC20TokenNN.new('NAME', 'SYMBOL', decimals, initialSupply);
     });
 
+    it('should fail if initialSupply is negative number ', async () => {
+      const negativeInitialSupply = new web3.utils.BN(web3.utils.toWei('-1000'));
+      await truffleAssert.fails(
+        ERC20TokenNN.new('NAME', 'SYMBOL', decimals, negativeInitialSupply),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
     it('owner should have all the initialSupply', async () => {
       const balance = await tokenInstance.balanceOf.call(owner);
 
@@ -119,6 +127,15 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
         truffleAssert.ErrorType.REVERT,
       );
     });
+
+    it('should fail when trying to call with negative value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-1', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.transfer(recipient, minusValue),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
   });
 
   describe('approve', async () => {
@@ -182,6 +199,15 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
 
       await truffleAssert.fails(
         tokenInstance.approve(spender, spendAmount, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when trying to call with negative value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-1', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.approve(spender, minusValue, { from: owner }),
         truffleAssert.ErrorType.REVERT,
       );
     });
@@ -315,6 +341,14 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
       );
     });
 
+    it('should fail when trying to call with negative value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-100', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.burn(minusValue, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
   });
 
   describe('burnFrom', async () => {
@@ -392,6 +426,7 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
         truffleAssert.ErrorType.REVERT,
       );
     });
+
     it('should fail when chain paused', async () => {
       await tokenInstance.approve(owner, allowedAmount, { from: burner });
 
@@ -475,6 +510,15 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
 
       await truffleAssert.fails(
         tokenInstance.recover(recipient, transferAmount, { from: holder }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when trying to call with negative value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-100', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.recover(holder, minusValue, { from: owner }),
         truffleAssert.ErrorType.REVERT,
       );
     });

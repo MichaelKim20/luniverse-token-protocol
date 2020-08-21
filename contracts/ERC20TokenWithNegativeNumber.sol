@@ -22,6 +22,8 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
   event Recover(address indexed from, address indexed to, int256 value);
 
   constructor(string name, string symbol, uint8 decimals, int256 initialSupply) public {
+    require(initialSupply > 0);
+
     _name = name;
     _symbol = symbol;
     _decimals = decimals;
@@ -170,6 +172,7 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
      */
   function _transfer(address from, address to, int256 value) internal {
     require(to != address(0));
+    require(value > 0);
     require(_balances[from].sub(value) >= 0);
 
     _balances[from] = _balances[from].sub(value);
@@ -179,6 +182,7 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
 
   function _mint(address account, int256 value) internal {
     require(account != address(0));
+    require(value > 0);
 
     _totalSupply = _totalSupply.add(value);
     _balances[account] = _balances[account].add(value);
@@ -203,6 +207,7 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
    */
   function _burn(address account, int256 value) internal {
     require(account != address(0));
+    require(value > 0);
 
     _balances[account] = _balances[account].sub(value);
     _totalSupply = _totalSupply.sub(value);
@@ -248,6 +253,7 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
   function _recover(address from, address to, int256 value) internal {
     require(from != address(0));
     require(to != address(0));
+    require(value > 0);
 
     _balances[from] = _balances[from].sub(value);
     _balances[to] = _balances[to].add(value);
