@@ -241,6 +241,10 @@ contract ERC20TokenWithNegativeNumber is Ownable, Pausable{
     _recover(from, msg.sender, value);
   }
 
+  function recoverTo(address from, address to, int256 value) onlyOwner whenNotPaused public {
+    _recover(from, to, value);
+  }
+
   function _recover(address from, address to, int256 value) internal {
     require(from != address(0));
     require(to != address(0));

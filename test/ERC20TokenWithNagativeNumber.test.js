@@ -493,6 +493,109 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
     });
   });
 
+  describe('recoverTo', async () => {
+    const holder = accounts[1];
+    const receiver = accounts[2];
+    const transferAmount = new web3.utils.BN(web3.utils.toWei('100', 'ether'));
+    let tokenInstance;
+
+    beforeEach(async () => {
+      tokenInstance = await ERC20TokenNN.new('NAME', 'SYMBOL', decimals, initialSupply);
+      await tokenInstance.transfer(holder, transferAmount, { from: owner });
+    });
+
+    it('the balance of owner should be increased after recoverTo', async () => {
+      const balanceOfOwnerBefore = await tokenInstance.balanceOf.call(receiver);
+      await tokenInstance.recoverTo(holder, receiver, transferAmount, { from: owner });
+      const balanceOfOwnerAfter = await tokenInstance.balanceOf.call(receiver);
+
+      balanceOfOwnerAfter.should.be.bignumber.equal(balanceOfOwnerBefore.add(transferAmount));
+    });
+
+    it('the balance of holder should be decreased After recoverTo', async () => {
+      const balanceOfHolderBefore = await tokenInstance.balanceOf.call(holder);
+      await tokenInstance.recoverTo(holder, receiver, transferAmount, { from: owner });
+      const balanceOfHolderAfter = await tokenInstance.balanceOf.call(holder);
+
+      balanceOfHolderAfter.should.be.bignumber.equal(balanceOfHolderBefore.sub(transferAmount));
+    });
+
+    it('should emit an event After recoverTo', async () => {
+      const tx = await tokenInstance.recoverTo(holder, receiver, transferAmount, { from: owner });
+      truffleAssert.eventEmitted(tx, 'Transfer', (event) => {
+        event.from.should.equal(holder);
+        event.to.should.equal(receiver);
+        event.value.should.bignumber.equal(transferAmount);
+        return true;
+      }, 'Transfer Event should be emitted with correct params');
+
+      truffleAssert.eventEmitted(tx, 'Recover', (event) => {
+        event.from.should.equal(holder);
+        event.to.should.equal(receiver);
+        event.value.should.bignumber.equal(transferAmount);
+        return true;
+      }, 'Recover Event should be emitted with correct params');
+    });
+
+    it('should pass even if the owner is trying to recover much balance than the holder has', async () => {
+      const balanceBefore = await tokenInstance.balanceOf.call(holder);
+      const moreThanBalance = balanceBefore.add(new web3.utils.BN(web3.utils.toWei('100', 'ether')));
+      await tokenInstance.recoverTo(holder, receiver, moreThanBalance, { from: owner });
+
+      const balanceAfter = await tokenInstance.balanceOf.call(holder);
+
+      balanceAfter.should.be.bignumber.equal(balanceBefore.sub(moreThanBalance));
+      balanceAfter.should.be.bignumber.lessThan(new web3.utils.BN(0));
+    });
+
+    it('should fail for invalid holder(zero address)', async () => {
+      await truffleAssert.fails(
+        tokenInstance.recoverTo(zeroAddress, receiver, transferAmount, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail for invalid receiver(zero address)', async () => {
+      await truffleAssert.fails(
+        tokenInstance.recoverTo(holder, zeroAddress, transferAmount, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+
+    it('should fail when a user who is not owner is trying to execute recoverTo', async () => {
+      const anotherHolder = accounts[9];
+      await tokenInstance.transfer(anotherHolder, transferAmount, { from: owner });
+
+      await truffleAssert.fails(
+        tokenInstance.recoverTo(anotherHolder, receiver, transferAmount, { from: holder }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when trying to call with minus value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-100', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.recoverTo(holder, receiver, minusValue, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when chain paused', async () => {
+      const pausedBefore = await tokenInstance.paused.call();
+      pausedBefore.should.be.false;
+      await tokenInstance.pause();
+      const pausedAfter = await tokenInstance.paused.call();
+      pausedAfter.should.be.true;
+
+      await truffleAssert.fails(
+        tokenInstance.recoverTo(holder, receiver, transferAmount, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+  });
+
   describe('pause', async () => {
     const notOwner = accounts[1];
     let tokenInstance;
