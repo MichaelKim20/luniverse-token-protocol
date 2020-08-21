@@ -286,6 +286,69 @@ contract('ERC20TokenWithNegativeNumber', (accounts) => {
     });
   });
 
+  describe('mint', async () => {
+    const mintAmount = new web3.utils.BN(web3.utils.toWei('100', 'ether'));
+    let tokenInstance;
+
+    beforeEach(async () => {
+      tokenInstance = await ERC20TokenNN.new('NAME', 'SYMBOL', decimals, initialSupply);
+    });
+
+    it('balance of a sender should be increased after mint', async () => {
+      const previousSenderBalance = await tokenInstance.balanceOf.call(owner);
+
+      await tokenInstance.mint(mintAmount);
+      const balance = await tokenInstance.balanceOf.call(owner);
+      balance.should.be.bignumber.equal(previousSenderBalance.add(mintAmount));
+    });
+
+    it('should emit an event after mint', async () => {
+      const tx = await tokenInstance.mint(mintAmount);
+      truffleAssert.eventEmitted(tx, 'Transfer', (event) => {
+        event.from.should.equal(zeroAddress);
+        event.to.should.equal(owner);
+        event.value.should.bignumber.equal(mintAmount);
+        return true;
+      }, 'Transfer Event should be emitted with correct params');
+      truffleAssert.eventEmitted(tx, 'Mint', (event) => {
+        event.from.should.equal(owner);
+        event.value.should.bignumber.equal(mintAmount);
+        return true;
+      }, 'Burn Event should be emitted with correct params');
+    });
+
+    it('should fail when chain paused', async () => {
+      const pausedBefore = await tokenInstance.paused.call();
+      pausedBefore.should.be.false;
+      await tokenInstance.pause();
+      const pausedAfter = await tokenInstance.paused.call();
+      pausedAfter.should.be.true;
+
+      await truffleAssert.fails(
+        tokenInstance.mint(mintAmount),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when a user who is not owner is trying to call mint', async () => {
+      const someone = accounts[9];
+
+      await truffleAssert.fails(
+        tokenInstance.mint(mintAmount, { from: someone }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+
+    it('should fail when trying to call with negative value', async () => {
+      const minusValue = new web3.utils.BN(web3.utils.toWei('-100', 'ether'));
+
+      await truffleAssert.fails(
+        tokenInstance.mint(minusValue, { from: owner }),
+        truffleAssert.ErrorType.REVERT,
+      );
+    });
+  });
+
   describe('burn', async () => {
     const burnAmount = new web3.utils.BN(web3.utils.toWei('100', 'ether'));
     let tokenInstance;
