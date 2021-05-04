@@ -20,8 +20,8 @@ contract MainToken is LinearMintableToken {
     _paused = false;
   }
 
-  modifier onlyUnlocked() {
-    require(!isLocked[msg.sender], "msg.sender is locked");
+  modifier onlyUnlocked(address _account) {
+    require(!isLocked[_account], "msg.sender is locked");
     _;
   }
 
@@ -90,33 +90,33 @@ contract MainToken is LinearMintableToken {
     emit Unpaused(msg.sender);
   }
 
-  function transfer(address _to, uint256 _value) public onlyUnlocked whenNotPaused returns (bool) {
+  function transfer(address _to, uint256 _value) public onlyUnlocked(msg.sender) whenNotPaused returns (bool) {
     return super.transfer(_to, _value);
   }
 
-  function transferFrom(address _from, address _to, uint256 _value) public onlyUnlocked
+  function transferFrom(address _from, address _to, uint256 _value) public onlyUnlocked(msg.sender) onlyUnlocked(_from) 
   whenNotPaused returns
   (bool) {
     return super.transferFrom(_from, _to, _value);
   }
 
-  function approve(address _spender, uint256 _value) public onlyUnlocked whenNotPaused returns
+  function approve(address _spender, uint256 _value) public onlyUnlocked(msg.sender) whenNotPaused returns
   (bool) {
     return super.approve(_spender, _value);
   }
 
-  function increaseAllowance(address _spender, uint _addedValue) public onlyUnlocked whenNotPaused
+  function increaseAllowance(address _spender, uint _addedValue) public onlyUnlocked(msg.sender) whenNotPaused
   returns (bool) {
     return super.increaseAllowance(_spender, _addedValue);
   }
 
-  function decreaseAllowance(address _spender, uint _subtractedValue) public onlyUnlocked
+  function decreaseAllowance(address _spender, uint _subtractedValue) public onlyUnlocked(msg.sender)
   whenNotPaused returns
   (bool) {
     return super.decreaseAllowance(_spender, _subtractedValue);
   }
 
-  function approveAndCall(address _spender, uint256 _value, bytes _extraData) onlyUnlocked whenNotPaused
+  function approveAndCall(address _spender, uint256 _value, bytes _extraData) onlyUnlocked(msg.sender) whenNotPaused
   public returns
   (bool success) {
     return super.approveAndCall(_spender, _value, _extraData);
