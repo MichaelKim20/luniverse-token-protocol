@@ -21,7 +21,7 @@ contract ERC20Token {
   event ApproveAndCall(address spender, uint value, bytes extraData);
 
   constructor(string _name, string _symbol, uint8 _decimals, uint256 _initialSupply, uint256 _maxSupply) public {
-    require(_maxSupply >= _initialSupply);
+    require(_maxSupply >= _initialSupply, "ERC20: initialSupply exceeds maxSupply");
 
     name = _name;
     symbol = _symbol;
@@ -109,7 +109,7 @@ contract ERC20Token {
   }
 
   function approveAndCall(address _spender, uint256 _value, bytes _extraData)  public returns (bool success) {
-    require(_spender != address(0));
+    require(_spender != address(0), "ERC20: approveAndCall from the zero address");
 
     TokenRecipient spender = TokenRecipient(_spender);
     if (approve(_spender, _value)) {
@@ -128,8 +128,8 @@ contract ERC20Token {
      * @param value The number of tokens that can be spent.
      */
   function _approve(address owner, address spender, uint256 value) internal {
-    require(spender != address(0));
-    require(owner != address(0));
+    require(spender != address(0), "ERC20: approve from the zero address");
+    require(owner != address(0), "ERC20: approve to the zero address");
 
     _allowed[owner][spender] = value;
     emit Approval(owner, spender, value);
@@ -142,7 +142,7 @@ contract ERC20Token {
      * @param value The amount to be transferred.
      */
   function _transfer(address from, address to, uint256 value) internal {
-    require(to != address(0));
+    require(to != address(0), "ERC20: transfer to the zero address");
 
     _balances[from] = _balances[from].sub(value);
     _balances[to] = _balances[to].add(value);
