@@ -24,11 +24,11 @@ contract MainToken is LinearMintableToken {
   }
 
   function mint(uint256 _amount) onlyOwner() external {
-    require(!mintingStatus);
+    require(!mintingStatus , "MainToken: mintingStatus is already true ");
     uint newTotalSupply = totalSupply.add(_amount);
     address tokenOwner = owner();
 
-    require( newTotalSupply <= maxSupply );
+    require( newTotalSupply <= maxSupply, "MainToken: newTotalSupply exceeds maxSupply" );
 
     _balances[tokenOwner] = _balances[tokenOwner].add(_amount);
 
@@ -38,13 +38,13 @@ contract MainToken is LinearMintableToken {
   }
 
   function lockAccount(address _account) onlyOwner() external {
-    require(!isLocked[_account]);
+    require(!isLocked[_account], "Pausable: account is already locked");
 
     isLocked[_account] = true;
   }
 
   function unlockAccount(address _account) onlyOwner() external {
-    require(isLocked[_account]);
+    require(isLocked[_account], "Pausable: account is already unlocked");
 
     isLocked[_account] = false;
   }
