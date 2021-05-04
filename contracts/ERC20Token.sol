@@ -12,7 +12,7 @@ contract ERC20Token {
   uint256 public maxSupply;
   uint8 public decimals;
 
-  mapping(address => uint256) _balances;
+  mapping(address => uint256) private _balances;
 
   mapping (address => mapping (address => uint256)) private _allowed;
 
