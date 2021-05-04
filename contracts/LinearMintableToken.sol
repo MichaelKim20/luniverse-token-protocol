@@ -15,7 +15,7 @@ contract LinearMintableToken is ERC20Token, Ownable {
   uint256 public intervalCount;
   uint256 public mintAmountPerPeriod;
   uint256 public createdTimestamp;
-  uint256 public mintedAmount;
+  uint256 public mintedAmount = 0;
 
   function registerLinearMint(
     uint256 _mintingSupply,
