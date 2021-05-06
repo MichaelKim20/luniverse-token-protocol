@@ -6,7 +6,7 @@ import "./Ownable.sol";
 contract LinearMintableToken is ERC20Token, Ownable {
   event Minted(address recipient, uint256 mintingAmount, uint256 mintedAmount);
 
-  uint256 constant SECONDS_IN_A_DAY = 86400;
+  uint256 private constant SECONDS_IN_A_DAY = 86400;
 
   bool public mintingStatus = false;
 
