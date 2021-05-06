@@ -43,7 +43,7 @@ contract LinearMintableToken is ERC20Token, Ownable {
   }
 
   function mintInternal(uint256 blockTimestamp) internal {
-    require(mintingStatus);
+    require(mintingStatus, "LinearMintableToken: mintingStatus must be true try registerLinearMint first");
 
     address tokenOwner = owner();
     uint256 mintingAmount = calculateMintAmount(blockTimestamp);
