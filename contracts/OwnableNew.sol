@@ -40,6 +40,15 @@ contract Ownable {
   function isOwner() public view returns (bool) {
     return msg.sender == _owner;
   }
+  
+  /**
+   * @return true is Owner is asked to get Owner privilage
+   */
+   
+  function isAsked() public view returns (bool) {
+    return Owner[msg.sender].OwnerAsked;
+  }
+
 
   /**
    * @dev Allows the current owner to relinquish control of the contract.
@@ -52,6 +61,12 @@ contract Ownable {
 //    emit OwnershipTransferred(_owner, address(0));
 //    _owner = address(0);
 //  }
+  struct OwnerInfo {
+    bool OwnerAsked;
+    bool OwnerAccept;
+  } 
+
+  mapping(address => OwnerInfo) Owner;
 
   /**
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
@@ -67,7 +82,23 @@ contract Ownable {
    */
   function _transferOwnership(address newOwner) internal {
     require(newOwner != address(0), "Ownable: new owner is the zero address");
+    require(Owner[newOwner].OwnerAccept == true);
     emit OwnershipTransferred(_owner, newOwner);
     _owner = newOwner;
   }
+  
+  /**
+   * @dev to adjust Pull-Over-Push Pattern new owner should be proposed first and stored in an intermediate variable
+   */
+  function askOwnership(address newOwner) public onlyOwner{
+    Owner[newOwner].OwnerAsked == true;
+  }
+    /**
+   * @dev to adjust Pull-Over-Push Pattern proposed owner should be able to accept ownership of the contract
+   */
+  function acceptOwnership() public {
+    require(Owner[msg.sender].OwnerAsked == true);
+    Owner[msg.sender].OwnerAccept == true;
+  }
+  
 }
