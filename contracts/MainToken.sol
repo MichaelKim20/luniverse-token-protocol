@@ -7,8 +7,8 @@ contract MainToken is LinearMintableToken {
   event Unpaused(address account);
 
   mapping (address => bool) public isLocked;
-  bool private _paused;
-
+  bool private _paused = false;
+  
   constructor(
     string _name,
     string _symbol,
