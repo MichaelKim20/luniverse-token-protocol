@@ -27,7 +27,7 @@ contract LinearMintableToken is ERC20Token, Ownable {
     require(totalSupply.add(_mintingSupply) <= maxSupply , "LinearMintableToken: totalSupply exceeds maxSupply");
     require(_mintAmountPerPeriod > 0 , "LinearMintableToken: mintAmountPerPeriod is 0");
     require(_intervalPeriodInDays > 0 , "LinearMintableToken: intervalPeriodInDays is 0");
-    require(createdTimestamp == 0 , "LinearMintableToken: createdTimestamp is already set");
+    // require(createdTimestamp == 0 , "LinearMintableToken: createdTimestamp is already set");
 
 
     mintingStatus = true;
