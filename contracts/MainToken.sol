@@ -16,14 +16,16 @@ contract MainToken is LinearMintableToken {
     uint256 _initialSupply,
     uint256 _maxSupply
   ) ERC20Token(_name, _symbol, _decimals, _initialSupply, _maxSupply)
-  public { }
+  public { 
+    mint(_initialSupply);
+  }
 
   modifier onlyUnlocked(address _account) {
     require(!isLocked[_account], "msg.sender is locked");
     _;
   }
 
-  function mint(uint256 _amount) onlyOwner() external {
+  function mint(uint256 _amount) onlyOwner() public {
     require(!mintingStatus , "MainToken: mintingStatus is already true ");
     uint newTotalSupply = totalSupply.add(_amount);
     address tokenOwner = owner();
