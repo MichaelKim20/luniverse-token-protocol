@@ -15,7 +15,7 @@ contract LinearMintableToken is ERC20Token, Ownable {
   uint256 public intervalCount;
   uint256 public mintAmountPerPeriod;
   uint256 public createdTimestamp;
-  uint256 public mintedAmount = 0;
+  uint256 public mintedAmount;
 
   function registerLinearMint(
     uint256 _mintingSupply,
@@ -27,8 +27,6 @@ contract LinearMintableToken is ERC20Token, Ownable {
     require(totalSupply.add(_mintingSupply) <= maxSupply , "LinearMintableToken: totalSupply exceeds maxSupply");
     require(_mintAmountPerPeriod > 0 , "LinearMintableToken: mintAmountPerPeriod is 0");
     require(_intervalPeriodInDays > 0 , "LinearMintableToken: intervalPeriodInDays is 0");
-    // require(createdTimestamp == 0 , "LinearMintableToken: createdTimestamp is already set");
-
 
     mintingStatus = true;
 
@@ -36,6 +34,7 @@ contract LinearMintableToken is ERC20Token, Ownable {
     mintAmountPerPeriod = _mintAmountPerPeriod;
     intervalPeriodInDays = _intervalPeriodInDays;
     createdTimestamp = block.timestamp;
+    mintedAmount = 0;
   }
 
   function linearMint() external {
@@ -47,7 +46,6 @@ contract LinearMintableToken is ERC20Token, Ownable {
 
     address tokenOwner = owner();
     uint256 mintingAmount = calculateMintAmount(blockTimestamp);
-    mintingAmount = mintingAmount.sub(mintedAmount);
 
     if ( mintingAmount == 0 )
       return;
@@ -55,6 +53,8 @@ contract LinearMintableToken is ERC20Token, Ownable {
     if ( mintingAmount >= mintingSupply ) {
       mintingAmount = mintingSupply.sub(mintedAmount);
       mintingStatus = false;
+    } else {
+      mintingAmount = mintingAmount.sub(mintedAmount);
     }
 
     totalSupply = totalSupply.add(mintingAmount);
