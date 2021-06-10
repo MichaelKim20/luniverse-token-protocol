@@ -26,7 +26,7 @@ contract ERC20Token {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
-
+    _balances[msg.sender] = _initialSupply;
     totalSupply = _initialSupply;
     maxSupply = _maxSupply;
   }

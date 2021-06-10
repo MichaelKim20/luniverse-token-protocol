@@ -16,9 +16,7 @@ contract MainToken is LinearMintableToken {
     uint256 _initialSupply,
     uint256 _maxSupply
   ) ERC20Token(_name, _symbol, _decimals, _initialSupply, _maxSupply)
-  public { 
-    mint(_initialSupply);
-  }
+  public { }
 
   modifier onlyUnlocked(address _account) {
     require(!isLocked[_account], "msg.sender is locked");
